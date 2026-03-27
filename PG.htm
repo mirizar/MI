@@ -19,7 +19,6 @@
          * to include another website just add an extra line:
          */
         var sites = [
-        {seed:"google", url:"http://www.google.be/"},
         ];
         
 
@@ -287,6 +286,33 @@
         }
          // ]]>
     </script>
+
+    <script type="text/javascript">
+        function copyToClipboard(inputId) {
+            var el = document.getElementById(inputId);
+            if (!el) return;
+            var text = (el.value || '').toString();
+            if (!text) return;
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).catch(function () { fallbackCopyText(text); });
+            } else {
+                fallbackCopyText(text);
+            }
+        }
+
+        function fallbackCopyText(text) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+    </script>
 </head>
 <body onload="document.ot.reset();document.ot.main.focus();">
     <div class="container">
@@ -299,14 +325,20 @@
             <script type="text/javascript">
             for(var i = 0; i < sites.length; i++) {
                 document.writeln("<input type=\"text\" name=\"site\" class=\"form-control site\" value=\"" + sites[i].seed + "\" readonly=\"readonly\">");
+                document.writeln("<div class=\"input-group\">");
                 document.writeln("<input type=\"text\" name=\"password\" id=\"" + sites[i].seed + "\" class=\"form-control password\" readonly=\"readonly\" value=\"\">");
+                document.writeln("<button class=\"btn btn-outline-secondary\" type=\"button\" onclick=\"copyToClipboard(\'" + sites[i].seed + "\')\">Copy</button>");
+                document.writeln("</div>");
             }
             </script>
 
 
             <input id="customRoot" value="" type="hidden">
             <input class="form-control site" name="CustomSite" onkeyup="otpassword.value = '';" placeholder="Custom" autocapitalize="off" type="text">
-            <input class="form-control password" name="otpassword" id="otpass" placeholder="" readonly="readonly" type="text">
+            <div class="input-group">
+                <input class="form-control password" name="otpassword" id="otpass" placeholder="" readonly="readonly" type="text">
+                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('otpass')">Copy</button>
+            </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Generate</button>
             <button class="btn btn-lg btn-danger btn-block" type="button" onclick="window.location.href=window.location.href">Clear</button>
         </form>
